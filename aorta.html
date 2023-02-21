@@ -1,0 +1,158 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1.0">
+
+    <title>Demographic Data Input Form</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        input[type=text],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-top: 6px;
+            margin-bottom: 16px;
+            resize: vertical;
+        }
+
+        input[type=submit] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type=submit]:hover {
+            background-color: #45a049;
+        }
+
+        .container {
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+
+        .downloadBtn {
+            background-color: blue;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .downloadBtn:hover {
+            background-color: lightblue;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>Aorta Data Input Form</h1>
+    <h3 style="color: red">전송 후엔 데이터 수정이 힘드니 <br> 전송 전에 다시 확인 바랍니다.</h3>
+    <form id="registry-form" action="http://localhost:8080/aorta_data" method="post">
+        <h2>기본정보</h2>
+        <label for="institution">병원명:</label>
+        <input type="text" id="institution" name="institution" required><br><br>
+        <label for="subject_number">Subject Number:</label>
+        <input type="text" id="subject_number" name="subject_number" required><br><br>
+        <label for="enrollment_date">등록일:</label>
+        <input type="date" id="enrollment_date" name="enrollment_date" required><br><br>
+        <label for="op_date">수술일:</label>
+        <input type="date" id="op_date" name="op_date" required><br><br>
+        <label for="name">환자이름:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        <label for="sex">성별:</label>
+        <input type="radio" id="male" name="sex" value="male" required>Male
+        <input type="radio" id="female" name="sex" value="female">Female<br><br>
+        <label for="age">나이:</label>
+        <input type="number" id="age" name="age" required><br><br>
+        <label for="doctor">집도의:</label>
+        <input type="radio" id="cjs" name="doctor" value="CJS" required>CJS
+        <input type="radio" id="osj" name="doctor" value="OSJ">OSJ
+        <input type="radio" id="oyj" name="doctor" value="OYJ">OYJ<br><br>
+        <label for="patient_number">병록번호:</label>
+        <input type="text" id="patient_number" name="patient_number" required><br><br><br>
+
+        <input type="submit" value="Submit">
+        <button id="downloadBtn" class="downloadBtn">Download Excel</button>
+        <h2 id="data_submit"></h2>
+    </form>
+
+
+    <script>
+
+
+
+        document.getElementById("registry-form").addEventListener("submit", function (event) {
+            event.preventDefault();            
+            const formData = new FormData(event.target);
+            const data = {}; // 여기서 data는 객체 형식임.
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+            console.log(data);
+
+            fetch('/aorta_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data) //body는 객체형식인 data를 JSON 형식으로 바꿔줌.
+            })
+                // .then(res => res.json())
+                .then((data) => {
+                    console.log(data);
+                    document.getElementById("data_submit").innerHTML = "데이터가 전송 되었습니다.";
+                })                
+
+        });
+
+        document.getElementById('downloadBtn').addEventListener('click', function () {
+            fetch('/download', {
+                headers: {
+                    'Content-Type': 'text/csv; charset=utf-8' // utf-8' 안해주면 age 같은 숫자외 문자는 인식이 안됨
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'aorta.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .then(() => {
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('There was a problem downloading the file:', error);
+                });
+        })
+    </script>
+</body>
+
+</html>
