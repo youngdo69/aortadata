@@ -13,7 +13,7 @@ require('dotenv').config({ path: 'variables.env' });
 
 
 const app = express(); //app은 서버를 만드는 것이다. express() 는 서버를 만드는 함수이다 (const server = express();)
-const port = 8080;
+
 const PORT = process.env.PORT || 8080;
 
 app.use(bodyParser.json());
