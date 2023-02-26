@@ -1,9 +1,12 @@
 
 const path = require('path');
-// const csvWriter = require('csv-writer').createObjectCsvWriter;
+const AWS = require("aws-sdk");
+const s3 = new AWS.S3();
 
 const cors = require('cors');
+const fs = require('fs');
 const mongoose = require('mongoose');
+const json2csv = require('json2csv').parse;
 const bodyParser = require('body-parser');
 const Excel = require('exceljs');
 const express = require('express');
@@ -12,9 +15,10 @@ const { dirname } = require('path');
 require('dotenv').config({ path: 'variables.env' });
 
 
+
 const app = express(); //app은 서버를 만드는 것이다. express() 는 서버를 만드는 함수이다 (const server = express();)
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
@@ -26,7 +30,7 @@ const connectDB = async () => {
     try {
         const conn = await mongoose.connect(process.env.mongoDB_URL, {
             useNewUrlParser: true,
-            useUnifiedTopology: true,           
+            useUnifiedTopology: true,
         });
         console.log(`MongoDB Connected: ${conn.connection.host}`);
     } catch (err) {
@@ -36,14 +40,13 @@ const connectDB = async () => {
 };
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'aorta.html'));
+    res.sendFile(path.join(__dirname, 'aorta1.html'));
 });
 
 
-app.post('/aorta_data', async(req, res) => {
-    const data = req.body;
+app.post('/aorta_data', async (req, res) => {
+    const data = req.body; //입력한 데이터
     console.log(data);
-    
 
     
     let counter = 0;
@@ -64,107 +67,93 @@ app.post('/aorta_data', async(req, res) => {
         patient_number: data.patient_number,
 
     });
-    individualData.save((err, result) => {
-        if(err){
-            console.log('Error saving document to collection:', err);
-        }else{
-            console.log('Data saved to MongoDB successfully.');
-            res.send('Data saved to MongoDB successfully.');
-        }
-    });
-       
+
+    try {
+        await individualData.save();
+        console.log('Data saved to MongoDB successfully.');
+        res.send('Data saved to MongoDB successfully.');
+    } catch (err) {
+        console.log('Error saving document to collection:', err);
+        res.status(500).send('Error saving document to collection');
+    }
+  
 
 });
 
-app.get('/result', async(req, res) => {
+app.get('/result', async (req, res) => {
     const aortadatas = await AortaData.find();
     if (aortadatas) {
         res.send(`총 ${aortadatas.length} 명의 환자 데이터가 있습니다.`);
-    }else {
+    } else {
         res.send('Something went wrong');
     }
 });
 
 app.get('/download', async (req, res) => {
     try {
-            const aortadatas = await AortaData.find();
+            const aortadatas = await AortaData.find({});
+            const fields = Object.keys(aortadatas[0]._doc); //특별히 ._doc 을 붙이면 mongoose document 임을 의미
 
-            let csv = "order_number,subject_number,enrollment_date,op_date,name,sex,age,doctor,patient_number\n";
+            const opts = {
+                fields,
+                encoding: 'utf-8', // set column head(fields) encoded to utf-8
+                withBOM: true, // add BOM to the beginning of the file to indicate encoding
+            };
+            // Convert the JSON data to CSV format 
+            // mongoDB data 를 가져올 때 json2csv 는 헤더를 따로 만들어주지 않는다.
+            const csv = json2csv(aortadatas, opts, { fields, header: true });
 
-            aortadatas.forEach(data => {
-                csv += `${data.order_number},`;
+            res.setHeader('Cache-Control', 'no-cache');
+            // Set response headers for file download
+            res.setHeader('Content-Type', 'text/csv');
+            res.setHeader('Content-Disposition', 'attachment; filename="aorta_data.csv"');
 
-                csv += `${data.subject_number},`;
-                csv += `${data.enrollment_date},`;
-                csv += `${data.op_date},`;
-                csv += `${data.name},`;
-                csv += `${data.sex},`;
-                csv += `${data.age},`;
-                csv += `${data.doctor},`;
-                csv += `${data.patient_number}\n`;
-            });
-
-
-        // JavaScript function to convert CSV string to excel
-            
-            const workbook = new Excel.Workbook();
-            const worksheet = workbook.addWorksheet('AortaData');
-
-            const csvRows = csv.split('\n');
-            const header = csvRows[0].split(',');
-            const data = [];
-            for (let i = 1; i < csvRows.length - 1; i++) {
-                const row = csvRows[i].split(',');
-                data.push(row);
-            }
-            worksheet.addRows(data);
-            worksheet.columns = header.map(columnHeader => {
-                return { header: columnHeader, key: columnHeader, width: 20 };
-            });
-                   
-            
-
-            // Write the workbook to a file
-            let file = await workbook.xlsx.writeBuffer();
-
-            // Set response header and send the file
-            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); //'text/csv; charset=utf-8');
-            res.setHeader('Content-Disposition', 'attachment; filename="arota.csv"');
-            res.send(file);
+            // Write the CSV data to S3 bucket as a file and send it to the client
+            const params = {
+                Bucket: process.env.CYCLIC_BUCKET,
+                Key: 'aorta_data.csv',
+                Body: csv
+            };
         
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error retrieving data');
-    }
+            s3.upload(params, function(err, data) {
+              if (err) {
+                console.log('Error uploading file to S3:', err);
+                res.status(500).send('Error uploading file to S3');
+                return;
+              }
+              const s3ReadStream = s3.getObject({Bucket: process.env.CYCLIC_BUCKET, Key: 'aorta_data.csv'}).createReadStream();
+              const fileWriteStream = fs.createWriteStream('aorta_data.csv');
+
+             s3ReadStream.pipe(fileWriteStream);      
+
+
+              fileWriteStream.on('close', () => {
+                res.download('aorta_data.csv', 'aorta_data.csv', (err) => {
+                  if (err) {
+                    console.log('Error downloading file:', err);
+                  }
+                  // Delete the CSV file after download is complete
+                  fs.unlink('aorta_data.csv', (err) => {
+                    if (err) {
+                      console.log('Error deleting file:', err);
+                    }
+                  });
+                });
+              });
+            });
+  } catch (err) {
+    console.log('Error:', err);
+    res.status(500).send('Error');
+  }
 });
 
 
-
-
-
-//mongoDB 연결 후 Listening to port 8080 만들기
+//mongoDB 연결 후에 Listening to port 3000 만드는 게 좋다
 connectDB().then(() => {
     app.listen(PORT, () => {
         console.log(`Listening to port ${PORT}`);
     });
 });
 
-
-
-// app.listen(port, (err) => {
-//     if (err) {
-//         console.log(err);
-//     } else { // 아래 몽구스 연결에 직접 url 주소를 쓰지 않고 process.env.mongoDB_URL 로 쓰는 이유는, 보안을 위해서이다.
-//         mongoose.connect(process.env.mongodb_URL, { useNewUrlParser: true, useUnifiedTopology: true },
-//             (err) => {
-//                 if (err) {
-//                     console.log(err);
-//                 } else {
-//                     console.log("Connected to server and MongoDB successfully. Input data now.");
-//                 }
-//             }
-//         );
-//     }
-// });
 
 
