@@ -116,31 +116,28 @@ app.get('/download', async (req, res) => {
             };
         
             s3.upload(params, function(err, data) {
-              if (err) {
-                console.log('Error uploading file to S3:', err);
-                res.status(500).send('Error uploading file to S3');
-                return;
-              }
-              const s3ReadStream = s3.getObject({Bucket: process.env.CYCLIC_BUCKET, Key: 'aorta_data.csv'}).createReadStream();
-              const fileWriteStream = fs.createWriteStream('aorta_data.csv');
-
-             s3ReadStream.pipe(fileWriteStream);      
-
-
-              fileWriteStream.on('close', () => {
-                res.download('aorta_data.csv', 'aorta_data.csv', (err) => {
-                  if (err) {
-                    console.log('Error downloading file:', err);
-                  }
-                  // Delete the CSV file after download is complete
-                  fs.unlink('aorta_data.csv', (err) => {
+                if (err) {
+                    console.log('Error uploading file to S3:', err);
+                    res.status(500).send('Error uploading file to S3');
+                    return;
+                }
+                
+                res.download(data.Location, 'aorta_data.csv', (err) => {
                     if (err) {
-                      console.log('Error deleting file:', err);
+                        console.log('Error downloading file:', err);
                     }
-                  });
                 });
-              });
+
+                //Delete the CSV file after download is complete
+                fs.unlink('aorta_data.csv', (err) => {
+                    if (err) {
+                        console.log('Error deleting file:', err);
+                    }
+                });
+                
             });
+        
+
   } catch (err) {
     console.log('Error:', err);
     res.status(500).send('Error');
