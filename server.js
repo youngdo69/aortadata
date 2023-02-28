@@ -1,9 +1,6 @@
 const path = require('path');
 const AWS = require("aws-sdk");
-const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-});
+const s3 = new AWS.S3({});
 
 const cors = require('cors');
 const fs = require('fs');
@@ -120,7 +117,7 @@ app.get('/download', async (req, res) => {
             
 
         
-            s3.upload(params, function(err, data) {
+            s3.upload(params, async function(err, data) {
                 if (err) {
                     console.log('Error uploading file to S3:', err);
                     res.status(500).send('Error uploading file to S3');
@@ -132,7 +129,7 @@ app.get('/download', async (req, res) => {
                     Key: 'aorta_data.csv'
                   };
             
-                s3.getObject(s3Params, function(err, data) {
+                await s3.getObject(s3Params, function(err, data) {
                 if (err) {
                     console.log('Error getting file from S3:', err);
                     res.status(500).send('Error getting file from S3');
