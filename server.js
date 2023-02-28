@@ -1,7 +1,9 @@
-
 const path = require('path');
 const AWS = require("aws-sdk");
-const s3 = new AWS.S3();
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
 
 const cors = require('cors');
 const fs = require('fs');
@@ -114,6 +116,9 @@ app.get('/download', async (req, res) => {
                 Key: 'aorta_data.csv',
                 Body: csv
             };
+
+            
+
         
             s3.upload(params, function(err, data) {
                 if (err) {
@@ -122,18 +127,29 @@ app.get('/download', async (req, res) => {
                     return;
                 }
                 
-                res.download(data.Location, 'aorta_data.csv', (err) => {
-                    if (err) {
-                        console.log('Error downloading file:', err);
-                    }
+                const s3Params = {
+                    Bucket: process.env.CYCLIC_BUCKET,
+                    Key: 'aorta_data.csv'
+                  };
+            
+                s3.getObject(s3Params, function(err, data) {
+                if (err) {
+                    console.log('Error getting file from S3:', err);
+                    res.status(500).send('Error getting file from S3');
+                    return;
+                }        
+                res.send(data.Body);
                 });
 
+                
+                
+
                 //Delete the CSV file after download is complete
-                fs.unlink('aorta_data.csv', (err) => {
-                    if (err) {
-                        console.log('Error deleting file:', err);
-                    }
-                });
+                // fs.unlink('aorta_data.csv', (err) => {
+                //     if (err) {
+                //         console.log('Error deleting file:', err);
+                //     }
+                // });
                 
             });
         
@@ -151,6 +167,5 @@ connectDB().then(() => {
         console.log(`Listening to port ${PORT}`);
     });
 });
-
 
 
