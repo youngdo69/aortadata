@@ -6,19 +6,11 @@
         <meta name="viewport" content="width=device-width" , initial-scale="1.0">
         <link rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" type="" text/css" href="aorta1.css">
+        
 
         <title>BMC Aorta Data Input Form</title>
         <style>
-            #body1 {
-                font-family: Arial, Helvetica, sans-serif;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 100vh;
-            }
-
-            body {
+           body {
                 font-family: Arial, Helvetica, sans-serif;
 
             }
@@ -26,8 +18,6 @@
             * {
                 box-sizing: border-box;
             }
-
-
 
             input[type=submit] {
                 background-color: #4CAF50;
@@ -61,7 +51,20 @@
             .downloadBtn:hover {
                 background-color: lightblue;
             }
+            
+            .total_numBtn {
+                background-color: rgb(180, 192, 6);
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
 
+            .total_numBtn:hover {
+                background-color: rgb(232, 233, 197);
+            } 
+                
             #message {
                 color: red;
                 font-size: 20px;
@@ -506,10 +509,11 @@
         <input type="radio" id="laparotomy" name="wound_site" value="laparotoomy">Laparotomy<br>
         <input type="radio" id="thoracoabdominal" name="wound_site" value="thoracoabdominal">Thoracoabdominal<br>
         <input type="radio" id="others" name="wound_site" value="others">Others<br><br><br>
-
-        <input type="submit" value="Submit">
-        <button id="downloadBtn" class="downloadBtn">Download Excel</button>
-        <h2 id="data_submit"></h2>
+        <h2 id="data_submit"></h2>                                                                
+        <input type="submit" value="전송">
+        <button id="downloadBtn" class="downloadBtn">엑셀다운로드</button> 
+        <button id="total_numBtn" class="total_numBtn">총인원</button>                                            
+        
     </form>
         
 
