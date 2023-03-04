@@ -526,6 +526,18 @@
             input.value = text;
             console.log(input.value)
         }
+            
+        $("[type='radio']").on('click', function (e) {
+            var previousValue = $(this).attr('previousValue');
+            if (previousValue == 'true') {
+                this.checked = false;
+                $(this).attr('previousValue', this.checked);
+            }
+            else {
+                this.checked = true;
+                $(this).attr('previousValue', this.checked);
+            }
+        });
 
         document.getElementById("registry-form").addEventListener("submit", function (event) {
             event.preventDefault();
