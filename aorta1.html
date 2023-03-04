@@ -1,18 +1,18 @@
 <html>
 
 <head>
-        <lang="ko">
+    <lang="ko">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width" , initial-scale="1.0">
         <link rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        
+        <link rel="stylesheet" type="" text/css" href="aorta1.css">
 
         <title>BMC Aorta Data Input Form</title>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                
+
         <style>
-           body {
+            body {
                 font-family: Arial, Helvetica, sans-serif;
 
             }
@@ -20,6 +20,8 @@
             * {
                 box-sizing: border-box;
             }
+
+
 
             input[type=submit] {
                 background-color: #4CAF50;
@@ -35,11 +37,7 @@
                 background-color: #45a049;
             }
 
-            .container {
-                border-radius: 5px;
-                background-color: #f2f2f2;
-                padding: 20px;
-            }
+
 
             .downloadBtn {
                 background-color: blue;
@@ -53,9 +51,9 @@
             .downloadBtn:hover {
                 background-color: lightblue;
             }
-            
+
             .total_numBtn {
-                background-color: rgb(180, 192, 6);
+                background-color: rgb(180, 163, 4);
                 color: white;
                 padding: 10px 20px;
                 border: none;
@@ -64,9 +62,10 @@
             }
 
             .total_numBtn:hover {
-                background-color: rgb(232, 233, 197);
-            } 
-                
+                background-color: rgb(228, 224, 167);
+            }
+
+
             #message {
                 color: red;
                 font-size: 20px;
@@ -117,9 +116,8 @@
                 margin-bottom: 16px;
                 resize: vertical;
             }
-     </style>                                                              
-                                                                  
-      
+        </style>
+
 
 </head>
 
@@ -142,19 +140,21 @@
         <input type="radio" id="male" name="sex" value="male" required>Male
         <input type="radio" id="female" name="sex" value="female">Female<br><br>
         <label for="age">나이:</label>
-        <input type="number" id="age" name="age" required><br><br>
+        <input type="number" id="age" name="age"><br><br>
         <label for="doctor">집도의:</label>
-        <input type="radio" id="cjs" name="doctor" value="CJS" required>CJS
+        <input type="radio" id="cjs" name="doctor" value="CJS">CJS
         <input type="radio" id="osj" name="doctor" value="OSJ">OSJ
-        <input type="radio" id="oyj" name="doctor" value="OYJ">OYJ<br><br>
+        <input type="radio" id="oyj" name="doctor" value="OYJ">OYJ<br>
+        <label for="doctor">그 밖의 집도의:</label>
+        <input type="text" id="operator" name="doctor" style="width:30%"><br><br>
         <label for="patient_number">병록번호:</label>
         <input type="text" id="patient_number" name="patient_number" required><br><br><br>
 
         <h2>수술 전 정보</h2>
-         <label for="weight">체중:</label>
-        <input type="number" id="weight" name="weight" ><br><br>
+        <label for="weight">체중:</label>
+        <input type="number" id="weight" name="weight" step="any"><br><br>
         <label for="height">키:</label>
-        <input type="number" id="height" name="height" ><br><br>
+        <input type="number" id="height" name="height" step="any"><br><br>
         <label for="bsa">Body surface area(m2):</label>
         <input type="number" id="bsa" name="bsa" step="any"><br><br>
         <label for="bmi">BMI:</label>
@@ -223,7 +223,7 @@
         <input type="radio" id="current" name="prev_mi" value="current">Current
         <input type="radio" id="previous" name="prev_mi" value="previous">Previous<br><br>
         <label for="connective">Connective tissue disorder(Marfan, LD 등):</label><br>
-        <input type="text" id="connective" name="connective" required><br><br>
+        <input type="text" id="connective" name="connective"><br><br>
         <label for="cpr">Preop/intraop CPR:</label><br>
         <input type="radio" id="no" name="cpr" value="no">No
         <input type="radio" id="yes" name="cpr" value="yes">Yes<br><br>
@@ -250,10 +250,10 @@
         <input type="radio" id="aortic_stenosis_moderate" name="pre_echo" value="aortic_stenosis_moderate">Moderate
         <input type="radio" id="aortic_stenosis_severe" name="pre_echo" value="aortic_stenosis_severe">Severe<br><br>
         <label for="coronary">Coronary artery disease:</label><br>
-        <input type="radio" id="no" name="coronary" value="no" required>No
+        <input type="radio" id="no" name="coronary" value="no">No
         <input type="radio" id="yes" name="coronary" value="yes">Yes<br><br>
         <label for="ef">LVEF:</label><br>
-        <input type="number" id="ef" name="ef" required><br><br>
+        <input type="number" id="ef" name="ef"><br><br>
         <label for="aortic_insufficiency">Aortic insufficiency:</label><br>
         <input type="radio" id="aortic_insufficiency_trivial" name="aortic_insufficiency"
             value="aortic_insufficiency_trivial">Trivial
@@ -302,13 +302,13 @@
         <input type="radio" id="no" name="homograft" value="no">No
         <input type="radio" id="yes" name="homograft" value="yes">Yes<br><br>
         <label for="op_time">OP time (분)</label><br>
-        <input type="number" id="op_time" name="op_time" required><br><br>
+        <input type="number" id="op_time" name="op_time"><br><br>
         <label for="cpb_time">CPB time (분):</label><br>
-        <input type="number" id="cpb_time" name="cpb_time" required><br><br>
+        <input type="number" id="cpb_time" name="cpb_time"><br><br>
         <label for="acc_time">ACC time (분):</label><br>
-        <input type="number" id="acc_time" name="acc_time" required><br><br>
+        <input type="number" id="acc_time" name="acc_time"><br><br>
         <label for="low_temp">Lowest temperature:</label><br>
-        <input type="number" id="low_temp" name="low_temp" required><br><br>
+        <input type="number" id="low_temp" name="low_temp"><br><br>
         <label for="temp_measure">Temperature measure:</label><br>
         <input type="radio" id="rectal" name="temp_measure" value="rectal">Rectal
         <input type="radio" id="bladder" name="temp_measure" value="bladder">Bladder
@@ -317,9 +317,9 @@
         <input type="text" id="etc" name="temp_measure" value="" style="width:30%">
         <button type="button" onclick="updateInput()">입력</button><br><br>
         <label for="low_body_ischemic_time">Low body ischemic time (분):</label><br>
-        <input type="number" id="low_body_ischemic_time" name="Low_body_ischemic_time" required><br><br>
+        <input type="number" id="low_body_ischemic_time" name="Low_body_ischemic_time"><br><br>
         <label for="tca">Total circulatory arrest time (TCA, 분):</label><br>
-        <input type="number" id="tca" name="tca" required><br><br>
+        <input type="number" id="tca" name="tca"><br><br>
         <label for="prox_acc_location">Proximal ACC 위치 (AAA, TAAA):</label><br>
         <input type="radio" id="suprarenal" name="prox_acc_location" value="suprarenal">Suprarenal
         <input type="radio" id="infrarenal" name="prox_acc_location" value="infrarenal">Infrarenal
@@ -370,8 +370,8 @@
         <label for="tevar">TEVAR:</label><br>
         <input type="radio" id="stent_no" name="tevar" value="stent_no">Stent graft를 사용하지 않은 경우
         <input type="radio" id="stent_yes" name="tevar" value="stent_yes">Stent graft를 사용한 경우<br><br>
-        <label for="procedure_time">Procedure time (분)</label><br>
-        <input type="text" id="procedure_time" name="procedure_time"><br><br>
+        <label for="pocedure-time">Procedure time (분)</label><br>
+        <input type="text" id="pocedure-time" name="pocedure-time"><br><br>
         <label for="prox_lz">Proximal landing zone</label><br>
         <input type="radio" id="zone0" name="prox_lz" value="zone0">zone 0<br>
         <input type="radio" id="zone1" name="prox_lz" value="zone1">zone 1<br>
@@ -412,8 +412,8 @@
         <label for="evar">EVAR:</label><br>
         <input type="radio" id="evar_stent_no" name="evar" value="evar_stent_no">Stent graft를 사용하지 않은 경우
         <input type="radio" id="evar_stent_yes" name="evar" value="evar_stent_yes">Stent graft를 사용한 경우<br><br>
-        <label for="evar_pocedure_time">Procedure time (분)</label><br>
-        <input type="text" id="evar_pocedure_time" name="evar_pocedure_time"><br><br>
+        <label for="evar_pocedure-time">Procedure time (분)</label><br>
+        <input type="text" id="evar_pocedure-time" name="evar_pocedure-time"><br><br>
         <label for="ibd">IBD (internal branch device)</label><br>
         <input type="radio" id="right" name="ibd" value="right">Rt
         <input type="radio" id="left" name="ibd" value="left">Lt
@@ -425,7 +425,7 @@
         <input type="radio" id="no" name="evar_other_proc" value="no">None<br>
         <input type="text" id="evar_etc_proc" name="evar_other_proc"
             placeholder="Palmaz/endoanchor 시용 등 기타 참고할 만한 것 적어주세요"><br><br>
-        <label for="evar_endoleak">Endoleak(intraop endoleak)</label><br>
+        <label for="evar_endolealk">Endoleak(intraop endoleak)</label><br>
         <input type="radio" id="no" name="evar_endoleak" value="no">None
         <input type="radio" id="type_1a" name="evar_endoleak" value="type_1a">Type Ia
         <input type="radio" id="type_1b" name="evar_endoleak" value="type_1b">Type Ib
@@ -448,10 +448,10 @@
         <input type="radio" id="infection" name="death_cause" value="infection">Infection<br>
         <input type="radio" id="multiorgan" name="death_cause" value="multiorgan">Multiorgan<br>
         <input type="radio" id="bleeding" name="death_cause" value="bleeding">Bleeding<br><br><br>
-        <label for="icu_stay">ICU stay (일)</label><br>
-        <input type="number" id="icu_stay" name="icu_stay"><br>
-        <label for="hospital_stay">Hospital stay (일)</label><br>
-        <input type="number" id="hospital_stay" name="hospital_stay"><br><br><br>
+        <label for="icu-stay">ICU stay (일)</label><br>
+        <input type="number" id="icu-stay" name="icu-stay" step="any"><br>
+        <label for="hospital-stay">Hospital stay (일)</label><br>
+        <input type="number" id="hospital-stay" name="hospital-stay" step="any"><br><br><br>
         <label for="bleeding">수술후 출혈 (Reop 한 경우만)</label><br>
         <input type="radio" id="no" name="bleeding" value="no">No
         <input type="radio" id="yes" name="bleeding" value="yes">Yes<br><br>
@@ -493,10 +493,10 @@
         <input type="radio" id="hemorrhage" name="cbr_lesion" value="hemorrhage">Hemorrhage<br>
         <input type="radio" id="ischemic" name="cbr_lesion" value="ischemic">Ischemic lesion<br>
         <input type="radio" id="both" name="cbr_lesion" value="both">Both<br><br>
-        <label for="cord_injury">Spinal cord injury</label><br>
-        <input type="radio" id="no" name="cord_injury" value="no">Nono<br>
-        <input type="radio" id="temp" name="cord_injury" value="temp">Temporary<br>
-        <input type="radio" id="perm" name="cord_injury" value="perm">Permanent<br><br><br>
+        <label for="cord-injury">Spinal cord injury</label><br>
+        <input type="radio" id="no" name="cord-injury" value="no">Nono<br>
+        <input type="radio" id="temp" name="cord-injury" value="temp">Temporary<br>
+        <input type="radio" id="perm" name="cord-injury" value="perm">Permanent<br><br><br>
         <label for="paraplegia">Paraplegia</label><br>
         <input type="radio" id="no" name="paraplegia" value="no">No<br>
         <input type="radio" id="paraparesis" name="paraplegia" value="paraparesis">Paraparesis<br>
@@ -511,13 +511,14 @@
         <input type="radio" id="laparotomy" name="wound_site" value="laparotoomy">Laparotomy<br>
         <input type="radio" id="thoracoabdominal" name="wound_site" value="thoracoabdominal">Thoracoabdominal<br>
         <input type="radio" id="others" name="wound_site" value="others">Others<br><br><br>
-        <h2 id="data_submit"></h2>                                                                
-        <input type="submit" value="전송">
-        <button id="downloadBtn" class="downloadBtn">엑셀다운로드</button> 
-        <button id="total_numBtn" class="total_numBtn">총인원</button>                                            
-        
+
+        <h2 id="data_submit"></h2>
+        <input type="submit" value="Submit">
+        <button id="downloadBtn" class="downloadBtn">Download Excel</button>
+        <button id="total_numBtn" class="total_numBtn">총인원</button>
+
     </form>
-        
+
 
 
     <script>
@@ -528,7 +529,9 @@
             input.value = text;
             console.log(input.value)
         }
-            
+
+
+
         $("[type='radio']").on('click', function (e) {
             var previousValue = $(this).attr('previousValue');
             if (previousValue == 'true') {
@@ -558,11 +561,11 @@
                 body: JSON.stringify(data) //body는 객체형식인 data를 JSON 형식으로 바꿔줌.
             })
                 // .then(res => res.json())
-            .then((body) => {
+                .then((body) => {
                     console.log(body);
                     document.getElementById("data_submit").innerHTML = "데이터가 전송 되었습니다.";
-            })                
-            
+                })
+
         });
 
         document.getElementById('downloadBtn').addEventListener('click', function () {
@@ -571,33 +574,35 @@
                     'Content-Type': 'text/csv; charset=utf-8' // utf-8' 안해주면 age 같은 숫자외 문자는 인식이 안됨
                 }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.blob();
-            })
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = url;
-                a.download = 'aorta.csv';
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-            })
-            .then(() => {
-                location.reload();
-            })
-            .catch(error => {
-                console.error('There was a problem downloading the file:', error);
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'aorta.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .then(() => {
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('There was a problem downloading the file:', error);
+                });
         });
-            
+
         document.getElementById('total_numBtn').addEventListener('click', () => {
             location.href = '/result';
         })
+
+
 
 
     </script>
