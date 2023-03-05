@@ -664,9 +664,11 @@
                     document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);
-                })
+                })                
                 .then(() => {
                     location.reload();
+                    $('#login-form').hide();
+                    $('#main-ui').show();
                 })
                 .catch(error => {
                     console.error('There was a problem downloading the file:', error);
