@@ -190,7 +190,8 @@ app.get('/result', async (req, res) => {
 app.get('/download', async (req, res) => {
     try {
             const aortadatas = await AortaData.find({});
-            const fields = Object.keys(aortadatas[0]._doc); //특별히 ._doc 을 붙이면 mongoose document 임을 의미
+            head = aortadata.filter(item => item.order === "1") // 기준이 되는 order=1 인 데이터의 column heade를 가져온다. 
+            const fields = Object.keys(head._doc); //특별히 ._doc 을 붙이면 mongoose document 임을 의미
 
             const opts = {
                 fields,
@@ -229,12 +230,12 @@ app.get('/download', async (req, res) => {
                   };
             
                 await s3.getObject(s3Params, function(err, data) {
-                if (err) {
-                    console.log('Error getting file from S3:', err);
-                    res.status(500).send('Error getting file from S3');
-                    return;
-                }        
-                res.send(data.Body);
+                    if (err) {
+                        console.log('Error getting file from S3:', err);
+                        res.status(500).send('Error getting file from S3');
+                        return;
+                    }        
+                    res.send(data.Body);
                 });
 
                 
