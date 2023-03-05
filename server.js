@@ -208,6 +208,7 @@ app.get('/download', async (req, res) => {
             res.setHeader('Cache-Control', 'no-cache');
             // Set response headers for file download
             res.setHeader('Content-Type', 'text/csv');
+            //save the file to local system rather than displaying it in the browser window.
             res.setHeader('Content-Disposition', 'attachment; filename="aorta_data.csv"');
 
             // Write the CSV data to S3 bucket as a file and send it to the client
