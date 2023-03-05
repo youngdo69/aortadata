@@ -190,7 +190,8 @@ app.get('/result', async (req, res) => {
 app.get('/download', async (req, res) => {
     try {
             const aortadatas = await AortaData.find({});
-            head = aortadatas.filter(item => item.order === "1") // 기준이 되는 order=1 인 데이터의 column heade를 가져온다. 
+            head = aortadatas.filter(item => item.order_number
+                === "1") // 기준이 되는 order=1 인 데이터의 column heade를 가져온다. 
             const fields = Object.keys(head._doc); //특별히 ._doc 을 붙이면 mongoose document 임을 의미
 
             const opts = {
