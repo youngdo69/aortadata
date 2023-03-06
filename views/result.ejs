@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result Page</title>
+
+    <style>
+         /* Center the text horizontally and vertically */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    
+    /* Style the h1 element */
+    h1 {
+      font-size: 3rem;
+      font-weight: bold;
+      text-align: center;
+    }
+    
+    /* Style the number of patients */
+    .blue {
+      color: blue;
+      font-weight: bold;
+    }
+    </style>
+</head>
+<body>
+    <h1>총 <span class="blue"><%= aortadatas.length %></span> 명의 환자 데이터가 있습니다.</h1>
+    
+</body>
+</html>

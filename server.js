@@ -23,6 +23,10 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 app.use(cors());
 
+// Set the view engine to use EJS
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
 //Mongoose connection SETUP
 mongoose.set('strictQuery', false);
 const connectDB = async () => {
@@ -181,7 +185,8 @@ app.post('/aorta_data', async (req, res) => {
 app.get('/result', async (req, res) => {
     const aortadatas = await AortaData.find();
     if (aortadatas) {
-        res.send(`총 ${aortadatas.length} 명의 환자 데이터가 있습니다.`);
+        res.render('result', { aortadatas });
+        
     } else {
         res.send('Something went wrong');
     }
