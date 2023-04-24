@@ -10,10 +10,10 @@
 
         <title>BMC Aorta Data Input Form</title>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-      
+
 
         <style>
-                    /* Style for login form */
+            /* Style for login form */
             body {
                 font-family: Arial, sans-serif;
                 background-color: #eee;
@@ -83,6 +83,20 @@
             }
 
 
+            .saveButton {
+                background-color: rgb(73, 101, 3);
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                
+            }
+
+            .saveButton:hover {
+                background-color: rgb(215, 230, 173);
+            }           
+
 
             .downloadBtn {
                 background-color: blue;
@@ -109,6 +123,7 @@
             .total_numBtn:hover {
                 background-color: rgb(228, 224, 167);
             }
+
 
 
             #message {
@@ -574,8 +589,10 @@
 
             <h2 id="data_submit"></h2>
             <input type="submit" value="Submit">
+            <button id="saveButton" class="saveButton" title="다른 PC에서는 임시저장한 데이터를 불러올 수 없습니다">임시저장</button>
             <button id="downloadBtn" class="downloadBtn">Download Excel</button>
             <button id="total_numBtn" class="total_numBtn">총인원</button>
+         
         </form>
 
     </div>
@@ -619,6 +636,41 @@
             }
         });
 
+        const inputElements = document.querySelectorAll('input:not([id="username"]):not([id="password"]), select, textarea'); //array
+        const saveButton = document.getElementById('saveButton');
+        
+
+        // Restore the saved data when the page is reloaded
+        window.addEventListener('load', () => {
+            for (const inputElement of inputElements) {
+                const savedData = localStorage.getItem(inputElement.name);
+
+                if (savedData && inputElement) {
+                    if (inputElement.type === 'radio' || inputElement.type === 'checkbox') {
+                        inputElement.checked = savedData === inputElement.value;
+                    } else {
+                        inputElement.value = savedData;
+                    }
+                }
+            }
+        });
+
+        // Save all input data when the save button is clicked
+        saveButton.addEventListener('click', () => {
+            for (const inputElement of inputElements) {
+                if (inputElement) {
+                    if (inputElement.type === 'radio' || inputElement.type === 'checkbox') {
+                        if (inputElement.checked) {
+                            localStorage.setItem(inputElement.name, inputElement.value);
+                        }
+                    } else {
+                        localStorage.setItem(inputElement.name, inputElement.value);
+                    }
+                }
+            }
+        });
+
+
         document.getElementById("registry-form").addEventListener("submit", function (event) {
             event.preventDefault();
             const formData = new FormData(event.target);
@@ -641,8 +693,8 @@
                     document.getElementById("data_submit").innerHTML = "데이터가 전송 되었습니다.";
                 })
 
-        });                
-          
+        });
+
 
         document.getElementById('downloadBtn').addEventListener('click', function () {
             fetch('/download', {
@@ -650,29 +702,29 @@
                     'Content-Type': 'text/csv; charset=utf-8' // utf-8' 안해주면 age 같은 숫자외 문자는 인식이 안됨
                 }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.blob();
-            })
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = url;
-                a.download = 'aorta.csv';
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                setTimeout(() => {
-                    document.body.removeChild(a);
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'aorta.csv';
+                    document.body.appendChild(a);
+                    a.click();
                     window.URL.revokeObjectURL(url);
-                }, 0);                 
-            })               
-            .catch(error => {
-                console.error('There was a problem downloading the file:', error);
-            });
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    }, 0);
+                })
+                .catch(error => {
+                    console.error('There was a problem downloading the file:', error);
+                });
         });
 
         document.getElementById('total_numBtn').addEventListener('click', () => {
