@@ -90,12 +90,12 @@
                 border: none;
                 border-radius: 5px;
                 cursor: pointer;
-                
+
             }
 
             .saveButton:hover {
                 background-color: rgb(215, 230, 173);
-            }           
+            }
 
 
             .downloadBtn {
@@ -592,7 +592,7 @@
             <button id="saveButton" class="saveButton" title="다른 PC에서는 임시저장한 데이터를 불러올 수 없습니다">임시저장</button>
             <button id="downloadBtn" class="downloadBtn">Download Excel</button>
             <button id="total_numBtn" class="total_numBtn">총인원</button>
-         
+
         </form>
 
     </div>
@@ -638,7 +638,7 @@
 
         const inputElements = document.querySelectorAll('input:not([id="username"]):not([id="password"]), select, textarea'); //array
         const saveButton = document.getElementById('saveButton');
-        
+
 
         // Restore the saved data when the page is reloaded
         window.addEventListener('load', () => {
@@ -670,7 +670,7 @@
             }
         });
 
-
+       
         document.getElementById("registry-form").addEventListener("submit", function (event) {
             event.preventDefault();
             const formData = new FormData(event.target);
@@ -692,6 +692,13 @@
                     console.log(body);
                     document.getElementById("data_submit").innerHTML = "데이터가 전송 되었습니다.";
                 })
+
+            for (const inputElement of inputElements) {
+                localStorage.removeItem(inputElement.name);
+            }
+
+            // Reload the page to show a new data input page
+            location.reload();
 
         });
 
