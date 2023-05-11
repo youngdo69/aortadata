@@ -695,11 +695,10 @@
 
             for (const inputElement of inputElements) {
                 localStorage.removeItem(inputElement.name);
+                inputElement.value = '';// reset form field to an empty string
             }
 
-            // Reload the page to show a new data input page
-            location.reload();
-
+            
         });
 
 
