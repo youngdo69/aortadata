@@ -592,7 +592,7 @@
             <button id="saveButton" class="saveButton" title="다른 PC에서는 임시저장한 데이터를 불러올 수 없습니다">임시저장</button>
             <button id="downloadBtn" class="downloadBtn">Download Excel</button>
             <button id="total_numBtn" class="total_numBtn">총인원</button>
-
+            <button id="logout-button">Logout</button>
         </form>
 
     </div>
@@ -603,15 +603,32 @@
 
     <script>
 
+        // Check if the user is already logged in
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if (isLoggedIn) {
+            $('#login-form').hide();
+            $('#main-ui').show();
+        } else {
+            $('#login-form').show();
+        }
+
         $('#login-button').click(function (event) {
             event.preventDefault();
             if ($('#username').val() == 'bmc' && $('#password').val() == 'bmc1234!!') {
                 $('#login-form').hide();
                 $('#main-ui').show();
+                localStorage.setItem('isLoggedIn', true);
             } else {
                 alert('Invalid username or password');
             }
 
+        });
+
+        $('#logout-button').click(function (event) {
+            event.preventDefault();
+            localStorage.removeItem('isLoggedIn');
+            $('#login-form').show();
+            $('#main-ui').hide();
         });
 
 
@@ -670,7 +687,7 @@
             }
         });
 
-       
+
         document.getElementById("registry-form").addEventListener("submit", function (event) {
             event.preventDefault();
             const formData = new FormData(event.target);
@@ -692,17 +709,18 @@
                     console.log(body);
                     document.getElementById("data_submit").innerHTML = "데이터가 전송 되었습니다.";
 
-                     // Clear local storage and reload the page inside the fetch then clause
+                    // Clear local storage and reload the page inside the fetch then clause
                     for (const inputElement of inputElements) {
                         localStorage.removeItem(inputElement.name);
                     }
                     // Reload the page to show a new data input page
                     location.reload();
+                    $('#login-form').hide();
                 })
                 .catch((error) => {
                     console.error('Error:', error);
-                  });
-                 
+                });
+
         });
 
 
